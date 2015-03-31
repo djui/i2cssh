@@ -15,8 +15,7 @@ pull-request.
 
 ## Installation
 
-    $ curl https://raw.githubusercontent.com/djui/i2cssh/master/i2cssh -o i2cssh
-    $ chmod u+x i2cssh
+    $ brew install https://raw.githubusercontent.com/djui/i2cssh/master/i2cssh.rb
 
 
 ## Usage
