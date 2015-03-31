@@ -1,0 +1,90 @@
+#!/usr/bin/osascript
+
+on run arguments
+    -- Show usage?
+    if (count of arguments) = 0 then
+        return usage()
+    end if
+    
+    set broadcastFlag to false
+    set fullscreenFlag to false
+    set columnsFlag to false
+    set hosts to {}
+    
+    -- Argument parsing
+    repeat while (count of arguments) > 0
+        set option to item 1 of arguments
+        set arguments to rest of arguments
+        
+        if option starts with "-" then
+            considering case
+                if (option = "-b") or (option = "--broadcast") then
+                    set broadcastFlag to true
+                else if (option = "-f") or (option = "--fullscreen") then
+                    set fullscreenFlag to true
+                else if (option = "-C") or (option = "--columns") then
+                    set columnsFlag to true
+                else if (option = "-h") or (option = "--help") then
+                    return usage()
+                else
+                    return "Unknown option: " & option
+                end if
+            end considering
+        else
+            set hosts to hosts & option
+        end if
+    end repeat
+    
+    -- Main program
+    tell application "iTerm"
+        create window with default profile command "/bin/sh"
+        
+        if fullscreenFlag then my activateFullscreenMode()
+        
+        tell current window
+            tell current tab
+                tell current session
+                    repeat with host in hosts
+                        if columnsFlag then
+                            split horizontally with same profile
+                        else
+                            split vertically with same profile
+                        end if
+                        write text "ssh -A " & host
+                    end repeat
+                end tell
+                
+                -- Close unused first pane
+                tell first session to close
+            end tell
+        end tell
+        
+        if broadcastFlag then my activateBroadcastMode()
+    end tell
+end run
+
+on usage()
+    return "i2cssh - Multiterminal for iTerm2
+Usage: i2cssh [options] [host...]
+
+Flags:
+
+  -f,  --fullscreen             Use fullscreen mode
+  -b,  --broadcast              Activate broadcast mode
+  -C,  --columns                Use columns, instead of rows
+  -h,  --help                   Show help screen"
+end usage
+
+on activateBroadcastMode()
+    tell application "System Events"
+        keystroke "i" using {command down, shift down}
+    end tell
+end activateBroadcastMode
+
+on activateFullscreenMode()
+    tell application "System Events"
+        tell front window of (first process whose frontmost is true)
+            set value of attribute "AXFullScreen" to true
+        end tell
+    end tell
+end activateFullscreenMode
