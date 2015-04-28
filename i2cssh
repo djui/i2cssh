@@ -1,21 +1,33 @@
 #!/usr/bin/osascript
 
 on run arguments
+    -- Verify dependencies are met
+    try
+        set dependencyText to "i2cssh required iTerm2 version >=2.9. Download nightly from https://iterm2.com/nightly/latest"
+        set iTermVersion to version of application "iTerm"
+
+        if (iTermVersion starts with "2.0" or iTermVersion starts with "2.1") then
+            return dependencyText
+        end if
+    on error
+        return dependencyText
+    end try
+
     -- Show usage?
     if (count of arguments) = 0 then
         return usage()
     end if
-    
+
     set broadcastFlag to false
     set fullscreenFlag to false
     set columnsFlag to false
     set hosts to {}
-    
+
     -- Argument parsing
     repeat while (count of arguments) > 0
         set option to item 1 of arguments
         set arguments to rest of arguments
-        
+
         if option starts with "-" then
             considering case
                 if (option = "-b") or (option = "--broadcast") then
@@ -34,13 +46,13 @@ on run arguments
             set hosts to hosts & option
         end if
     end repeat
-    
+
     -- Main program
     tell application "iTerm"
         create window with default profile command "/bin/sh"
-        
+
         if fullscreenFlag then my activateFullscreenMode()
-        
+
         tell current window
             tell current tab
                 tell current session
@@ -53,12 +65,12 @@ on run arguments
                         write text "ssh -A " & host
                     end repeat
                 end tell
-                
+
                 -- Close unused first pane
                 tell first session to close
             end tell
         end tell
-        
+
         if broadcastFlag then my activateBroadcastMode()
     end tell
 end run
