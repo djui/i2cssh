@@ -1,8 +1,8 @@
 class I2cssh < Formula
   homepage "https://github.com/djui/i2cssh"
   head "https://github.com/djui/i2cssh.git"
-  url "https://github.com/djui/i2cssh/archive/1.1.tar.gz"
-  sha256 "ec7fb8edbfcf783dd42990149de9393476b66eaa76974cf31b8aa25344430445"
+  url "https://github.com/djui/i2cssh/archive/1.2.tar.gz"
+  sha256 "8dd1e3f6c00eae7882876848e460ac290a0d787de3275787d8ee1b6edddf55f9"
 
   def install
     bin.install "i2cssh"
