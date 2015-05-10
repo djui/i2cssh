@@ -22,15 +22,16 @@ pull-request.
 
 ```
 $ i2cssh
-i2cssh - Multiterminal for iTerm2
 Usage: i2cssh [options] [host...]
 
 Flags:
 
--f,  --fullscreen             Use fullscreen mode
--b,  --broadcast              Activate broadcast mode
--C,  --columns                Use columns, instead of rows
--h,  --help                   Show help screen
+  -b,  --broadcast              Activate broadcast mode
+  -f,  --fullscreen             Use fullscreen mode
+  -C,  --columns                Use columns, instead of rows
+  -h,  --help                   Show help screen
+
+All other provided options are assumed to be SSH options."
 ```
 
 

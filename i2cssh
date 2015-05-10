@@ -89,7 +89,7 @@ Flags:
   -C,  --columns                Use columns, instead of rows
   -h,  --help                   Show help screen
 
-All other provided options are assumed to be SSH commands."
+All other provided options are assumed to be SSH options."
 end usage
 
 on activateBroadcastMode()
