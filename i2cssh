@@ -1,18 +1,20 @@
+#!/bin/bash
+
+ITERM_VERSION=$(osascript -e 'version of application "iTerm"')
+
+if [[ "$ITERM_VERSION" =~ ^2\.(0|1).* ]] ; then
+   echo "i2cssh required iTerm2 version >=2.9. Download nightly from https://iterm2.com/nightly/latest" >&2
+   exit 1
+fi
+
+tail -n +15 $0 > /tmp/i2cssh
+chmod u+x /tmp/i2cssh
+exec /tmp/i2cssh "$@"
+exit
+
 #!/usr/bin/osascript
 
 on run arguments
-    -- Verify dependencies are met
-    try
-        set dependencyText to "i2cssh required iTerm2 version >=2.9. Download nightly from https://iterm2.com/nightly/latest"
-        set iTermVersion to version of application "iTerm"
-
-        if (iTermVersion starts with "2.0" or iTermVersion starts with "2.1") then
-            return dependencyText
-        end if
-    on error
-        return dependencyText
-    end try
-
     -- Show usage?
     if (count of arguments) = 0 then
         return usage()
@@ -22,6 +24,7 @@ on run arguments
     set fullscreenFlag to false
     set columnsFlag to false
     set hosts to {}
+    set sshArgs to ""
 
     -- Argument parsing
     repeat while (count of arguments) > 0
@@ -39,7 +42,7 @@ on run arguments
                 else if (option = "-h") or (option = "--help") then
                     return usage()
                 else
-                    return "Unknown option: " & option
+                    set sshArgs to sshArgs & option & " "
                 end if
             end considering
         else
@@ -62,7 +65,7 @@ on run arguments
                         else
                             split vertically with same profile
                         end if
-                        write text "ssh -A " & host
+                        write text "ssh " & sshArgs & host
                     end repeat
                 end tell
 
@@ -81,10 +84,12 @@ Usage: i2cssh [options] [host...]
 
 Flags:
 
-  -f,  --fullscreen             Use fullscreen mode
   -b,  --broadcast              Activate broadcast mode
+  -f,  --fullscreen             Use fullscreen mode
   -C,  --columns                Use columns, instead of rows
-  -h,  --help                   Show help screen"
+  -h,  --help                   Show help screen
+
+All other provided options are assumed to be SSH commands."
 end usage
 
 on activateBroadcastMode()
